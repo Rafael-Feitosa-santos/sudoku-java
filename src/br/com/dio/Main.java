@@ -1,7 +1,10 @@
 package br.com.dio;
 
 import br.com.dio.model.Board;
+import br.com.dio.model.Space;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Stream;
@@ -59,6 +62,20 @@ public class Main {
             return;
         }
 
+        List<List<Space>> spaces = new ArrayList<>();
+        for (int i = 0; i < BOARD_LIMIT; i++) {
+            spaces.add(new ArrayList<>());
+            for (int j = 0; j < BOARD_LIMIT; j++) {
+                var positionConfig = positions.get("%s,%s".formatted(i, j));
+                var expected = Integer.parseInt(positionConfig.split(",")[0]);
+                var fixed = Boolean.parseBoolean(positionConfig.split(",")[1]);
+                var currentSpace = new Space(expected, fixed);
+                spaces.get(i).add(currentSpace);
+            }
+        }
+
+        board = new Board(spaces);
+        System.out.println("O jogo está pronto para começar");
     }
 
 
@@ -103,7 +120,7 @@ public class Main {
         var args = new Object[81];
         var argPos = 0;
         for (int i = 0; i < BOARD_LIMIT; i++) {
-            for (var col : board.getSpace()) {
+            for (var col : board.getSpaces()) {
                 args[argPos++] = " " + ((isNull(col.get(i).getActual())) ? " " : col.get(i).getActual());
             }
         }
@@ -154,9 +171,9 @@ public class Main {
             showCurrentGame();
             board = null;
         } else if (board.hasErrors()) {
-            System.out.println("Seu jogo contém, erros, verifique seu board e ajuste-o");
+            System.out.println("Seu jogo conté, erros, verifique seu board e ajuste-o");
         } else {
-            System.out.println("Você ainda precisa preencher algum espaço");
+            System.out.println("Você ainda precisa preenhcer algum espaço");
         }
     }
 
